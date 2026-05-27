@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Wellness Check-In</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f6f8; padding: 24px 16px 48px; color: #1a1a1a; }
+:root {
+  --gold: #BF912F; --navy: #003B56; --teal: #2DA693; --blue: #5B9BD5;
+  --gold-light: #F7EDD6; --navy-light: #E6EEF2; --teal-light: #DCF2EF; --blue-light: #E8F1FA;
+  --gold-dark: #7A5C1A; --navy-dark: #00243A; --teal-dark: #1A6B60; --blue-dark: #2D5F8A;
+  --track-bg: #D8DDE3;
+  --border: #e2e6ea; --card-bg: #ffffff; --text: #1a1a1a; --text-muted: #6b7280;
+}
+.container { max-width: 680px; margin: 0 auto; }
+.wcard { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+.section-label { font-size: 13px; font-weight: 500; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.slider-wrap { margin-bottom: 14px; }
+.slider-wrap:last-child { margin-bottom: 0; }
+.slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.slider-name { font-size: 13px; color: var(--text-muted); }
+.slider-val { font-size: 13px; font-weight: 500; padding: 2px 10px; border-radius: 20px; }
+.sv-teal { color: var(--teal-dark); background: var(--teal-light); }
+.sv-navy { color: var(--navy-dark); background: var(--navy-light); }
+.sv-blue { color: var(--blue-dark); background: var(--blue-light); }
+.sv-gold { color: var(--gold-dark); background: var(--gold-light); }
+input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 2px; outline: none; cursor: pointer; }
+input[type=range].track-teal { background: linear-gradient(to right, var(--teal) 0%, var(--teal) var(--pct, 50%), var(--track-bg) var(--pct, 50%), var(--track-bg) 100%); }
+input[type=range].track-navy { background: linear-gradient(to right, var(--navy) 0%, var(--navy) var(--pct, 50%), var(--track-bg) var(--pct, 50%), var(--track-bg) 100%); }
+input[type=range].track-blue { background: linear-gradient(to right, var(--blue) 0%, var(--blue) var(--pct, 50%), var(--track-bg) var(--pct, 50%), var(--track-bg) 100%); }
+input[type=range].track-gold { background: linear-gradient(to right, var(--gold) 0%, var(--gold) var(--pct, 50%), var(--track-bg) var(--pct, 50%), var(--track-bg) 100%); }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.15); cursor: pointer; }
+input[type=range].track-teal::-webkit-slider-thumb { background: var(--teal); }
+input[type=range].track-navy::-webkit-slider-thumb { background: var(--navy); }
+input[type=range].track-blue::-webkit-slider-thumb { background: var(--blue); }
+input[type=range].track-gold::-webkit-slider-thumb { background: var(--gold); }
+input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #fff; cursor: pointer; box-shadow: 0 0 0 1px rgba(0,0,0,0.15); }
+input[type=range].track-teal::-moz-range-thumb { background: var(--teal); }
+input[type=range].track-navy::-moz-range-thumb { background: var(--navy); }
+input[type=range].track-blue::-moz-range-thumb { background: var(--blue); }
+input[type=range].track-gold::-moz-range-thumb { background: var(--gold); }
+.tag-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.tag { border: 1px solid #d1d5db; border-radius: 20px; padding: 6px 14px; font-size: 13px; cursor: pointer; background: #fff; color: var(--text-muted); transition: all 0.15s; }
+.tag:hover { border-color: var(--gold); color: var(--gold-dark); background: var(--gold-light); }
+.tag.selected { background: var(--gold-light); border-color: var(--gold); color: var(--gold-dark); font-weight: 500; }
+.submit-btn { width: 100%; padding: 13px; border-radius: 8px; border: none; background: var(--navy); color: #E6EEF2; font-size: 15px; font-weight: 500; cursor: pointer; transition: background 0.15s; }
+.submit-btn:hover { background: var(--navy-dark); }
+.summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 1rem; }
+.metric-card { border-radius: 8px; padding: 0.85rem 0.5rem; text-align: center; }
+.metric-card.m-phys { background: var(--teal-light); }
+.metric-card.m-mental { background: var(--navy-light); }
+.metric-card.m-social { background: var(--blue-light); }
+.metric-card.m-work { background: var(--gold-light); }
+.metric-val { font-size: 17px; font-weight: 500; }
+.m-phys .metric-val, .m-phys .metric-label { color: var(--teal-dark); }
+.m-mental .metric-val, .m-mental .metric-label { color: var(--navy-dark); }
+.m-social .metric-val, .m-social .metric-label { color: var(--blue-dark); }
+.m-work .metric-val, .m-work .metric-label { color: var(--gold-dark); }
+.metric-label { font-size: 11px; margin-top: 3px; }
+.header-band { background: var(--navy); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 12px; }
+.header-band i { font-size: 28px; color: var(--gold); }
+.header-band h1 { font-size: 17px; font-weight: 500; color: #E6EEF2; }
+.tip-item { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; font-size: 13px; line-height: 1.5; }
+.tip-item:last-child { margin-bottom: 0; }
+.tip-item.tip-teal { background: var(--teal-light); color: var(--teal-dark); }
+.tip-item.tip-navy { background: var(--navy-light); color: var(--navy-dark); }
+.tip-item.tip-gold { background: var(--gold-light); color: var(--gold-dark); }
+.tip-item.tip-blue { background: var(--blue-light); color: var(--blue-dark); }
+.tip-item i { font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+.tip-strong { font-weight: 500; }
+.quote-box { border-left: 3px solid var(--gold); padding: 14px 16px; margin-bottom: 1rem; background: var(--gold-light); }
+.quote-text { font-size: 14px; color: var(--gold-dark); font-style: italic; line-height: 1.6; margin-bottom: 4px; }
+.quote-attr { font-size: 12px; color: var(--gold); font-weight: 500; }
+.reset-btn { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #d1d5db; background: #f4f6f8; color: var(--text); font-size: 14px; cursor: pointer; transition: background 0.15s; margin-top: 0.75rem; }
+.reset-btn:hover { background: #e9ecef; }
+.footer-note { text-align: center; font-size: 11px; color: #9ca3af; margin-top: 1rem; padding: 0 1rem; line-height: 1.5; }
+.thanks-header { background: var(--teal); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+.thanks-header h1 { font-size: 17px; font-weight: 500; color: #fff; margin-bottom: 2px; }
+.thanks-header p { font-size: 12px; color: #b3e4de; }
+#thanks-view { display: none; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div id="checkin-view">
+  <div class="header-band">
+    <i class="ti ti-heart-rate-monitor"></i>
+    <div><h1>Daily wellness check-in</h1></div>
+  </div>
+
+  <div class="wcard">
+    <div class="section-label" style="color:var(--teal-dark)"><i class="ti ti-run" style="color:var(--teal)"></i> 1 · Physical</div>
+    <div class="slider-wrap">
+      <div class="slider-header"><span class="slider-name">Energy level</span><span class="slider-val sv-teal" id="energy-out">5 / 10</span></div>
+      <input type="range" id="energy" class="track-teal" min="1" max="10" value="5" step="1">
+    </div>
+    <div class="slider-wrap">
+      <div class="slider-header"><span class="slider-name">Hours of sleep last night</span><span class="slider-val sv-teal" id="sleep-out">7h</span></div>
+      <input type="range" id="sleep" class="track-teal" min="0" max="12" value="7" step="1">
+    </div>
+    <div class="slider-wrap">
+      <div class="slider-header"><span class="slider-name">Movement so far today</span><span class="slider-val sv-teal" id="movement-out">20 min</span></div>
+      <input type="range" id="movement" class="track-teal" min="0" max="90" value="20" step="5">
+    </div>
+  </div>
+
+  <div class="wcard">
+    <div class="section-label" style="color:var(--navy-dark)"><i class="ti ti-brain" style="color:var(--navy)"></i> 2 · Mental clarity</div>
+    <div class="slider-wrap">
+      <div class="slider-header"><span class="slider-name">Focus & clarity</span><span class="slider-val sv-navy" id="clarity-out">5 / 10</span></div>
+      <input type="range" id="clarity" class="track-navy" min="1" max="10" value="5" step="1">
+    </div>
+    <div class="slider-wrap">
+      <div class="slider-header"><span class="slider-name">Stress level</span><span class="slider-val sv-navy" id="stress-out">5 / 10</span></div>
+      <input type="range" id="stress" class="track-navy" min="1" max="10" value="5" step="1">
+    </div>
+    <p style="font-size:13px; color:var(--text-muted); margin:12px 0 8px;">How's your headspace today? (optional)</p>
+    <div class="tag-row">
+      <button class="tag" data-tag="foggy" type="button">Brain fog</button>
+      <button class="tag" data-tag="anxious" type="button">Anxious thoughts</button>
+      <button class="tag" data-tag="distracted" type="button">Easily distracted</button>
+      <button class="tag" data-tag="sharp" type="button">Sharp & focused</button>
+      <button class="tag" data-tag="creative" type="button">Feeling creative</button>
+    </div>
+  </div>
+
+  <div class="wcard">
+    <div class="section-label" style="color:var(--blue-dark)"><i class="ti ti-users" style="color:var(--blue)"></i> 3 · Social connection</div>
+    <div class="slider-wrap">
+      <div class="slider-header"><span class="slider-name">Feeling supported by your team</span><span class="slider-val sv-blue" id="supported-out">5 / 10</span></div>
+      <input type="range" id="supported" class="track-blue" min="1" max="10" value="5" step="1">
+    </div>
+    <div class="slider-wrap">
+      <div class="slider-header"><span class="slider-name">Sense of belonging today</span><span class="slider-val sv-blue" id="belonging-out">5 / 10</span></div>
+      <input type="range" id="belonging" class="track-blue" min="1" max="10" value="5" step="1">
+    </div>
+    <p style="font-size:13px; color:var(--text-muted); margin:12px 0 8px;">Anything affecting your connections? (optional)</p>
+    <div class="tag-row">
+      <button class="tag" data-tag="isolated" type="button">Feeling isolated</button>
+      <button class="tag" data-tag="conflict" type="button">Team conflict</button>
+      <button class="tag" data-tag="unheard" type="button">Feeling unheard</button>
+      <button class="tag" data-tag="great-team" type="button">Great team energy</button>
+    </div>
+  </div>
+
+  <div class="wcard">
+    <div class="section-label" style="color:var(--gold-dark)"><i class="ti ti-chart-bar" style="color:var(--gold)"></i> 4 · Workload</div>
+    <div class="slider-wrap">
+      <div class="slider-header"><span class="slider-name">Workload pressure</span><span class="slider-val sv-gold" id="workload-out">5 / 10</span></div>
+      <input type="range" id="workload" class="track-gold" min="1" max="10" value="5" step="1">
+    </div>
+    <p style="font-size:13px; color:var(--text-muted); margin:12px 0 8px;">Any blockers or stressors? (optional)</p>
+    <div class="tag-row">
+      <button class="tag" data-tag="meetings" type="button">Too many meetings</button>
+      <button class="tag" data-tag="unclear" type="button">Unclear priorities</button>
+      <button class="tag" data-tag="deadlines" type="button">Tight deadlines</button>
+      <button class="tag" data-tag="tech" type="button">Tech issues</button>
+      <button class="tag" data-tag="personal" type="button">Personal matters</button>
+    </div>
+  </div>
+
+  <button class="submit-btn" id="submit-btn" type="button">Submit check-in</button>
+  <p class="footer-note">Your responses are anonymous and are for your personal wellness only — no data is collected or shared.</p>
+</div>
+
+<div id="thanks-view">
+  <div class="thanks-header">
+    <h1>Check-in complete</h1>
+    <p>Here's a snapshot of today and some personalised suggestions</p>
+  </div>
+  <div class="summary-grid">
+    <div class="metric-card m-phys"><div class="metric-val" id="s-physical">—</div><div class="metric-label">Physical</div></div>
+    <div class="metric-card m-mental"><div class="metric-val" id="s-mental">—</div><div class="metric-label">Mental clarity</div></div>
+    <div class="metric-card m-social"><div class="metric-val" id="s-social">—</div><div class="metric-label">Social</div></div>
+    <div class="metric-card m-work"><div class="metric-val" id="s-workload">—</div><div class="metric-label">Workload</div></div>
+  </div>
+  <div class="quote-box">
+    <div class="quote-text" id="quote-text"></div>
+    <div class="quote-attr" id="quote-attr"></div>
+  </div>
+  <div class="wcard">
+    <div class="section-label" style="margin-bottom:10px; color:var(--gold-dark)"><i class="ti ti-bulb" style="color:var(--gold)"></i> Personalised tips for today</div>
+    <div id="tips-section"></div>
+  </div>
+  <button class="reset-btn" id="reset-btn" type="button">Start a new check-in</button>
+  <p class="footer-note">Your responses are anonymous and are for your personal wellness only — no data is collected or shared.</p>
+</div>
+
+</div><!-- end container -->
+
+<script>
+let selectedTags = new Set();
+document.querySelectorAll('.tag').forEach(tag => {
+  tag.addEventListener('click', () => {
+    const k = tag.dataset.tag;
+    if (selectedTags.has(k)) { selectedTags.delete(k); tag.classList.remove('selected'); }
+    else { selectedTags.add(k); tag.classList.add('selected'); }
+  });
+});
+function updateTrack(el) {
+  const pct = ((parseFloat(el.value) - parseFloat(el.min)) / (parseFloat(el.max) - parseFloat(el.min)) * 100).toFixed(1) + '%';
+  el.style.setProperty('--pct', pct);
+}
+function wireSlider(id, outId, fmt) {
+  const el = document.getElementById(id), out = document.getElementById(outId);
+  updateTrack(el);
+  el.addEventListener('input', () => { out.textContent = fmt(parseInt(el.value)); updateTrack(el); });
+}
+wireSlider('energy','energy-out', v => v+' / 10');
+wireSlider('sleep','sleep-out', v => v===0?'none':v+'h');
+wireSlider('movement','movement-out', v => v===0?'none':v+' min');
+wireSlider('clarity','clarity-out', v => v+' / 10');
+wireSlider('stress','stress-out', v => v+' / 10');
+wireSlider('supported','supported-out', v => v+' / 10');
+wireSlider('belonging','belonging-out', v => v+' / 10');
+wireSlider('workload','workload-out', v => v+' / 10');
+const quotes = [
+  { text: "Take care of your body. It's the only place you have to live.", attr: "— Jim Rohn" },
+  { text: "Almost everything will work again if you unplug it for a few minutes, including you.", attr: "— Anne Lamott" },
+  { text: "You don't have to be positive all the time. It's perfectly okay to feel sad, angry, or stressed. Having feelings doesn't make you weak — it makes you human.", attr: "— Lori Deschene" },
+  { text: "Rest is not idleness, and to lie sometimes on the grass under trees on a summer's day is by no means a waste of time.", attr: "— John Lubbock" },
+  { text: "In the middle of difficulty lies opportunity.", attr: "— Albert Einstein" },
+  { text: "You are allowed to be both a masterpiece and a work in progress simultaneously.", attr: "— Sophia Bush" },
+  { text: "Caring for yourself is not self-indulgence, it is self-preservation.", attr: "— Audre Lorde" },
+  { text: "Small steps in the right direction can turn out to be the biggest steps of your life.", attr: "— Unknown" },
+  { text: "Connection is why we're here. It is what gives purpose and meaning to our lives.", attr: "— Brené Brown" },
+  { text: "It's not about having time. It's about making time.", attr: "— Unknown" },
+];
+const allTips = [
+  { condition: d => d.energy<=3, icon:'ti-bolt', style:'tip-teal', strong:'Low energy', text:'Try a 5-minute walk and a glass of water before your next task. Brief movement helps reset focus.' },
+  { condition: d => d.energy>=4&&d.energy<=6, icon:'ti-bolt', style:'tip-teal', strong:'Moderate energy', text:"You're in a steady zone. Tackle your most important task now while you have momentum." },
+  { condition: d => d.sleep===0, icon:'ti-moon', style:'tip-teal', strong:'No sleep logged', text:'Running on empty is tough. A 10–20 minute rest break this afternoon can meaningfully restore alertness.' },
+  { condition: d => d.sleep>0&&d.sleep<6, icon:'ti-moon', style:'tip-teal', strong:'Short sleep', text:'Less than 6 hours can impact mood and concentration. A short break or reduced screen time this afternoon may help.' },
+  { condition: d => d.movement<15, icon:'ti-run', style:'tip-teal', strong:'Low movement', text:'Even a 10-minute walk or stretch break improves circulation, mood, and afternoon focus.' },
+  { condition: d => d.clarity<=4, icon:'ti-brain', style:'tip-navy', strong:'Low mental clarity', text:'Try the two-minute rule — write down everything on your mind before starting work to clear mental clutter.' },
+  { condition: d => d.stress>=7, icon:'ti-wind', style:'tip-navy', strong:'High stress', text:'A 3-minute breathing exercise can lower your cortisol noticeably. Inhale 4 counts, hold 4, exhale 6.' },
+  { condition: d => d.tags.has('foggy'), icon:'ti-cloud', style:'tip-navy', strong:'Brain fog', text:'Hydration and a short walk are the fastest fog-lifters. Avoid back-to-back meetings when possible.' },
+  { condition: d => d.tags.has('anxious'), icon:'ti-heart', style:'tip-navy', strong:'Anxious thoughts', text:'Ground yourself with the 5-4-3-2-1 technique: name 5 things you can see, 4 you can touch, 3 you can hear.' },
+  { condition: d => d.supported<=4, icon:'ti-users', style:'tip-blue', strong:'Feeling less supported', text:'Reach out to one colleague today — even a brief chat can meaningfully shift your sense of connection.' },
+  { condition: d => d.belonging<=4, icon:'ti-user-heart', style:'tip-blue', strong:'Low sense of belonging', text:'Consider joining a team lunch, virtual coffee, or a shared channel. Small moments of connection add up.' },
+  { condition: d => d.tags.has('isolated'), icon:'ti-user-off', style:'tip-blue', strong:'Feeling isolated', text:'Isolation is more common than people admit. One proactive message to a colleague can break the cycle.' },
+  { condition: d => d.tags.has('great-team'), icon:'ti-star', style:'tip-blue', strong:'Great team energy today', text:'Lean into it — collaborative tasks and creative work thrive when connection is high.' },
+  { condition: d => d.workload>=8, icon:'ti-list-check', style:'tip-gold', strong:'High workload pressure', text:"Time-block your top 3 priorities this morning. Saying no to lower-priority requests is a skill, not a failure." },
+  { condition: d => d.tags.has('meetings'), icon:'ti-calendar-off', style:'tip-gold', strong:'Meeting overload', text:'Block at least one 30-minute slot today for focused, uninterrupted work. Protect it like an appointment.' },
+  { condition: d => d.tags.has('unclear'), icon:'ti-help-circle', style:'tip-gold', strong:'Unclear priorities', text:"A 5-minute sync with your manager or team to align on today's top priority can save hours of misdirected effort." },
+  { condition: d => d.tags.has('personal'), icon:'ti-heart', style:'tip-blue', strong:'Personal matters on your mind', text:"It's okay to not be fully switched on every day. Give yourself grace and take things one step at a time." },
+  { condition: d => d.energy>=7&&d.clarity>=7&&d.workload<=5, icon:'ti-star', style:'tip-gold', strong:"You're in great shape today", text:'High energy and clarity with manageable workload — a great day to tackle creative or strategic work.' },
+];
+document.getElementById('submit-btn').addEventListener('click', () => {
+  const data = {
+    energy: parseInt(document.getElementById('energy').value),
+    sleep: parseInt(document.getElementById('sleep').value),
+    movement: parseInt(document.getElementById('movement').value),
+    clarity: parseInt(document.getElementById('clarity').value),
+    stress: parseInt(document.getElementById('stress').value),
+    supported: parseInt(document.getElementById('supported').value),
+    belonging: parseInt(document.getElementById('belonging').value),
+    workload: parseInt(document.getElementById('workload').value),
+    tags: selectedTags,
+  };
+  document.getElementById('s-physical').textContent = Math.round((data.energy + Math.min(data.sleep,10) + (data.movement>=30?10:data.movement>=15?7:4))/3) + ' / 10';
+  document.getElementById('s-mental').textContent = Math.round((data.clarity+(11-data.stress))/2) + ' / 10';
+  document.getElementById('s-social').textContent = Math.round((data.supported+data.belonging)/2) + ' / 10';
+  document.getElementById('s-workload').textContent = data.workload + ' / 10';
+  const q = quotes[Math.floor(Math.random()*quotes.length)];
+  document.getElementById('quote-text').textContent = '\u201C'+q.text+'\u201D';
+  document.getElementById('quote-attr').textContent = q.attr;
+  const matched = allTips.filter(t => t.condition(data)).slice(0,4);
+  const section = document.getElementById('tips-section');
+  section.innerHTML = '';
+  if (!matched.length) {
+    section.innerHTML = '<div class="tip-item tip-teal"><i class="ti ti-star"></i><span><span class="tip-strong">You\'re in great shape today!</span> Keep up the habits — consistency is what makes wellness stick.</span></div>';
+  } else {
+    matched.forEach(tip => {
+      const div = document.createElement('div');
+      div.className = 'tip-item '+tip.style;
+      div.innerHTML = '<i class="ti '+tip.icon+'"></i><span><span class="tip-strong">'+tip.strong+'</span> — '+tip.text+'</span>';
+      section.appendChild(div);
+    });
+  }
+  document.getElementById('checkin-view').style.display = 'none';
+  document.getElementById('thanks-view').style.display = 'block';
+  window.scrollTo(0,0);
+});
+document.getElementById('reset-btn').addEventListener('click', () => {
+  selectedTags = new Set();
+  document.querySelectorAll('.tag').forEach(t => t.classList.remove('selected'));
+  [['energy','5'],['sleep','7'],['movement','20'],['clarity','5'],['stress','5'],['supported','5'],['belonging','5'],['workload','5']].forEach(([id,val]) => {
+    const el = document.getElementById(id); el.value = val; el.dispatchEvent(new Event('input'));
+  });
+  document.getElementById('checkin-view').style.display = 'block';
+  document.getElementById('thanks-view').style.display = 'none';
+  window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>
